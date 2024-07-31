@@ -8,20 +8,20 @@ define("APP_URL", "http://appium.s3.amazonaws.com/TestApp6.0.app.zip");
 
 class SauceTest extends Sauce\Sausage\WebDriverTestCase
 {
-    protected $numValues = array();
+    protected $numValues = [];
 
-    public static $browsers = array(
-        array(
-            'browserName' => '',
+    public static $browsers = [
+        [
+            'browserName' => 'iPhone',
             'seleniumServerRequestsTimeout' => 240,
-            'desiredCapabilities' => array(
+            'desiredCapabilities' => [
                 'platform' => 'Mac 10.8',
                 'device' => 'iPhone Simulator',
                 'app' => APP_URL,
                 'version' => '6.1',
-            )
-        )
-    );
+            ]
+        ]
+    ];
 
     public function elemsByTag($tag)
     {
@@ -42,8 +42,21 @@ class SauceTest extends Sauce\Sausage\WebDriverTestCase
     {
         $this->populate();
         $buttons = $this->elemsByTag('button');
-        $buttons[0]->click();
+        
+        // Check if there's at least one button
+        if (isset($buttons[0])) {
+            $buttons[0]->click();
+        } else {
+            $this->fail('No button found to click');
+        }
+
         $texts = $this->elemsByTag('staticText');
-        $this->assertEquals(array_sum($this->numValues), (int)($texts[0]->text()));
+        
+        // Check if there's at least one staticText element
+        if (isset($texts[0])) {
+            $this->assertEquals(array_sum($this->numValues), (int)$texts[0]->text());
+        } else {
+            $this->fail('No staticText element found to verify the result');
+        }
     }
 }
